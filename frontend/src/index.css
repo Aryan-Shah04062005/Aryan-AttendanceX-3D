@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cyber-dark text-cyber-silver antialiased select-none overflow-x-hidden;
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+
+  /* Custom Sleek Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-cyber-dark/40 backdrop-blur-md;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-cyber-purple/40 rounded-full hover:bg-cyber-blue/60 transition-colors duration-300;
+  }
+}
+
+#root {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  border-inline: none;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Glassmorphism Presets */
+.glass-card {
+  @apply bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl shadow-glass shadow-slate-950/40 transition-all duration-300;
+}
+
+.glass-card-hover {
+  @apply hover:border-cyber-blue/30 hover:shadow-neon-blue hover:-translate-y-1 transition-all duration-300;
+}
+
+.glass-card-purple {
+  @apply bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl shadow-glass shadow-slate-950/40 hover:border-cyber-purple/30 hover:shadow-neon-purple hover:-translate-y-1 transition-all duration-300;
+}
+
+.glass-input {
+  @apply bg-slate-950/40 border border-white/10 rounded-xl px-4 py-3 text-cyber-silver focus:outline-none focus:border-cyber-blue focus:ring-1 focus:ring-cyber-blue/30 placeholder-white/30 backdrop-blur-xs transition-all duration-300;
+}
+
+.glass-btn {
+  @apply relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-white bg-gradient-to-r from-cyber-blue/80 to-cyber-purple/80 hover:from-cyber-blue hover:to-cyber-purple transition-all duration-300 active:scale-95 shadow-lg shadow-cyber-blue/20 hover:shadow-cyan-500/30;
+}
+
+.glass-btn-secondary {
+  @apply rounded-xl px-6 py-3 font-semibold text-white bg-white/5 border border-white/10 hover:bg-white/10 active:scale-95 transition-all duration-300;
+}
+
+/* Animations & Keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes holographic-glow {
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(96, 165, 250, 0.4)); }
+  50% { filter: drop-shadow(0 0 30px rgba(167, 139, 250, 0.6)); }
+}
+
+.animate-holo {
+  animation: holographic-glow 4s ease-in-out infinite;
+}
+
+/* Neon Text Glow */
+.text-neon-glow {
+  text-shadow: 0 0 10px rgba(96, 165, 250, 0.6), 0 0 20px rgba(167, 139, 250, 0.4);
+}
