@@ -33,9 +33,10 @@ api.interceptors.response.use(
       localStorage.removeItem('user');
       localStorage.removeItem('profile');
       
+      const baseUrl = import.meta.env.BASE_URL || '/';
       // Optionally redirect if not already on login page
-      if (!window.location.pathname.includes('/login') && window.location.pathname !== '/') {
-        window.location.href = '/';
+      if (!window.location.pathname.includes('/login') && window.location.pathname !== baseUrl) {
+        window.location.href = baseUrl;
       }
     }
     return Promise.reject(error);
