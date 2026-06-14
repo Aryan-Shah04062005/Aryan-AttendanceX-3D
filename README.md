@@ -27,14 +27,14 @@ npm run install:all
 ### 2. Configuration
 Create a `.env` file in the `backend/` directory (you can copy `backend/.env.example` as a template):
 ```env
-PORT=5000
+PORT=4000
 JWT_SECRET=super-secret-security-attendance-token
 MONGODB_URI=mongodb://localhost:27017/attendancex
 ```
 *Note: If `MONGODB_URI` is not provided, the database will fall back to persistent local JSON files in `backend/data/` automatically.*
 
 ### 3. Running the Application
-To start both the Express API backend (port 5000) and Vite React frontend (port 5173) concurrently in development mode, run:
+To start both the Express API backend (port 4000) and Vite React frontend (port 5173) concurrently in development mode, run:
 ```bash
 npm run dev
 ```
@@ -99,3 +99,29 @@ The status of daily attendance is updated automatically upon clocking out based 
 3. **Half Day**: Worked hours are less than the required shift hours.
 4. **Absent**: Arrives after the *Max Late Entry Time*, or does not record a clock-in for the day.
 5. **Leave**: Automatically recorded as "Leave" for dates where the employee's leave request is approved.
+
+---
+
+## 🚀 Live Deployment Guide
+
+This project is optimized for a simple, zero-cost, 1-click cloud deployment.
+
+### 1. Backend Deployment (Render)
+1. Go to [Render](https://render.com/) and sign in with GitHub.
+2. Click **New +** and select **Blueprint**.
+3. Link your `Aryan-AttendanceX-3D` repository.
+4. Render will automatically read the `render.yaml` file and set up the service.
+5. (Optional) Under environment variables, you can set `MONGODB_URI` to a free MongoDB Atlas connection string so database entries are preserved permanently.
+6. Click **Apply**. Once deployed, copy your web service URL (e.g. `https://aryan-attendance-backend.onrender.com`).
+
+### 2. Frontend Deployment (Vercel)
+1. Go to [Vercel](https://vercel.com/) and sign in with GitHub.
+2. Click **Add New** -> **Project**.
+3. Select your `Aryan-AttendanceX-3D` repository.
+4. In the configuration:
+   - Set **Root Directory** to `frontend`.
+   - Expand the **Environment Variables** section and add:
+     - Name: `VITE_API_URL`
+     - Value: `https://YOUR-RENDER-BACKEND-URL/api` (replace with your actual Render URL).
+5. Click **Deploy**. Vercel will build and serve your app. All client routes are protected and rewritten to `index.html` via the `frontend/vercel.json` file.
+
