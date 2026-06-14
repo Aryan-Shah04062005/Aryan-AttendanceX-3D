@@ -284,8 +284,56 @@ export const Charts3D: React.FC<Charts3DProps> = ({ data, type, height = 300 }) 
       });
     };
 
+    const handleTouchStart = (event: TouchEvent) => {
+      if (event.touches.length === 0) return;
+      const touch = event.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(interactiveObjects);
+
+      // Reset all materials emissive color
+      interactiveObjects.forEach((obj) => {
+        const mesh = obj as THREE.Mesh;
+        const mat = mesh.material as THREE.MeshStandardMaterial;
+        mat.emissive.setHex(0x000000);
+      });
+
+      if (intersects.length > 0) {
+        const hoveredObj = intersects[0].object as THREE.Mesh;
+        const mat = hoveredObj.material as THREE.MeshStandardMaterial;
+        
+        // Glow effect
+        mat.emissive.setHex(0x222222);
+
+        const uData = hoveredObj.userData;
+        let tooltipText = '';
+        if (type === 'bar') {
+          tooltipText = `${uData.label}: ${uData.value}`;
+          if (uData.secondary !== undefined) {
+             tooltipText += ` | Absent: ${uData.secondary}`;
+          }
+        } else {
+          tooltipText = `${uData.label}: ${uData.value} (${uData.percentage}%)`;
+        }
+
+        setTooltip({
+          show: true,
+          text: tooltipText,
+          x: touch.clientX - rect.left + 10,
+          y: touch.clientY - rect.top - 40
+        });
+      } else {
+        setTooltip(prev => ({ ...prev, show: false }));
+      }
+    };
+
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseleave', handleMouseLeave);
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+    canvas.addEventListener('touchmove', handleTouchStart, { passive: true });
 
     // Smooth subtle chart rotation
     let animationFrameId: number;
@@ -317,6 +365,8 @@ export const Charts3D: React.FC<Charts3DProps> = ({ data, type, height = 300 }) 
       cancelAnimationFrame(animationFrameId);
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseleave', handleMouseLeave);
+      canvas.removeEventListener('touchstart', handleTouchStart);
+      canvas.removeEventListener('touchmove', handleTouchStart);
       resizeObserver.disconnect();
       
       // Dispose geometries & materials
