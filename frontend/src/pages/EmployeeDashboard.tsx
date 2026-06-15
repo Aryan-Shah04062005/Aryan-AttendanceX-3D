@@ -144,7 +144,7 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ currentTab
   }
 
   return (
-    <div className="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6 select-none relative z-10">
+    <div className="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6 select-none relative z-10">
       
       {/* Notifications Banner */}
       {(error || success) && (
@@ -193,11 +193,11 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ currentTab
             </div>
 
             {/* Glowing Digital Time */}
-            <div className="my-8">
-              <h1 className="text-6xl font-extrabold text-white font-mono tracking-widest text-neon-glow leading-none">
+            <div className="my-6 sm:my-8">
+              <h1 className="text-4xl sm:text-6xl font-extrabold text-white font-mono tracking-widest text-neon-glow leading-none">
                 {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </h1>
-              <p className="text-sm text-cyber-silver font-semibold mt-4">
+              <p className="text-xs sm:text-sm text-cyber-silver font-semibold mt-3 sm:mt-4">
                 {time.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
@@ -308,10 +308,10 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ currentTab
         <div className="space-y-6">
           
           {/* Stats Metrics Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
             
             {/* Main Circle Gauge */}
-            <div className="glass-card p-4 col-span-2 md:col-span-1 flex flex-col justify-between items-center text-center">
+            <div className="glass-card p-4 col-span-2 sm:col-span-1 flex flex-col justify-between items-center text-center">
               <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider">Attendance Rate</span>
               
               <div className="relative my-4 flex items-center justify-center">
@@ -367,10 +367,41 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ currentTab
           </div>
 
           {/* Historical Logs List */}
-          <div className="glass-card p-6">
+          <div className="glass-card p-4 sm:p-6">
             <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-4 border-b border-white/5 pb-2">Attendance Logs History</h3>
             
-            <div className="overflow-x-auto">
+            {/* Mobile card list */}
+            <div className="flex flex-col gap-2 sm:hidden">
+              {attendance.map((r) => (
+                <div key={r.id} className="rounded-xl bg-white/5 border border-white/10 p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-white text-xs font-semibold">{r.date}</span>
+                    <span className={`px-2 py-0.5 rounded text-[9px] uppercase font-bold border ${
+                      r.status === 'Present' || r.status === 'Late'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        : r.status === 'Half Day'
+                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                        : r.status === 'Leave'
+                        ? 'bg-cyber-purple/10 text-cyber-purple border-cyber-purple/20'
+                        : 'bg-red-500/10 text-red-400 border-red-500/20'
+                    }`}>
+                      {r.status}
+                    </span>
+                  </div>
+                  <div className="flex gap-3 text-[10px] font-mono text-white/50">
+                    <span>In: <span className="text-white/70">{r.entryTime || '-'}</span></span>
+                    <span>Out: <span className="text-white/70">{r.exitTime || '-'}</span></span>
+                    <span className="text-cyber-blue font-bold">{r.workingHours} hrs</span>
+                  </div>
+                </div>
+              ))}
+              {attendance.length === 0 && (
+                <p className="py-10 text-center text-white/30 text-xs font-sans">No historical logs found in database.</p>
+              )}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-white/5 text-white/40 text-[10px] uppercase font-mono">
@@ -481,10 +512,35 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ currentTab
           </div>
 
           {/* History List */}
-          <div className="glass-card p-6 md:col-span-2">
+          <div className="glass-card p-4 sm:p-6 md:col-span-2">
             <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-4 border-b border-white/5 pb-2">Leave Request History</h3>
             
-            <div className="overflow-x-auto">
+            {/* Mobile card list */}
+            <div className="flex flex-col gap-2 sm:hidden">
+              {leaves.map((lv) => (
+                <div key={lv.id} className="rounded-xl bg-white/5 border border-white/10 p-3 space-y-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-white text-xs font-mono">{lv.startDate} → {lv.endDate}</span>
+                    <span className={`px-2 py-0.5 rounded text-[9px] uppercase font-bold border flex-shrink-0 ${
+                      lv.status === 'Approved'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        : lv.status === 'Rejected'
+                        ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                        : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                    }`}>
+                      {lv.status}
+                    </span>
+                  </div>
+                  <p className="text-xs text-white/50 truncate">{lv.reason}</p>
+                </div>
+              ))}
+              {leaves.length === 0 && (
+                <p className="py-10 text-center text-white/30 text-xs font-sans">No leave requests logged.</p>
+              )}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-white/5 text-white/40 text-[10px] uppercase font-mono">
@@ -504,8 +560,8 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ currentTab
                       </td>
                       <td className="py-4 pr-4 text-right">
                         <span className={`px-2 py-0.5 rounded text-[9px] uppercase font-bold border ${
-                          lv.status === 'Approved' 
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                          lv.status === 'Approved'
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                             : lv.status === 'Rejected'
                             ? 'bg-red-500/10 text-red-400 border-red-500/20'
                             : 'bg-amber-500/10 text-amber-400 border-amber-500/20'

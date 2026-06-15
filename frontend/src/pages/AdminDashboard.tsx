@@ -360,7 +360,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentTab }) =>
   }
 
   return (
-    <div className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6 select-none relative z-10">
+    <div className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6 select-none relative z-10">
       
       {/* Alert Banner for Actions */}
       {(error || successMsg) && (
@@ -577,8 +577,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentTab }) =>
 
           {/* Modal / Form Overlay */}
           {showEmpForm && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-cyber-dark/80 backdrop-blur-sm">
-              <div className="w-full max-w-2xl glass-card p-6 border border-white/10 relative max-h-[90vh] overflow-y-auto">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-cyber-dark/80 backdrop-blur-sm">
+              <div className="w-full max-w-2xl glass-card p-4 sm:p-6 border border-white/10 relative max-h-[90vh] overflow-y-auto">
                 <div className="absolute top-4 right-4">
                   <button 
                     onClick={() => setShowEmpForm(false)} 
@@ -816,9 +816,56 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentTab }) =>
       {/* TAB PANEL: LEAVES */}
       {/* ==================================================== */}
       {currentTab === 'leaves' && (
-        <div className="glass-card p-6">
+        <div className="glass-card p-4 sm:p-6">
           <h3 className="text-lg font-bold text-white mb-4">Employee Leave Request Queue</h3>
-          <div className="overflow-x-auto">
+
+          {/* Mobile card list */}
+          <div className="flex flex-col gap-3 sm:hidden">
+            {leaves.map((lv) => (
+              <div key={lv.id} className="rounded-xl bg-white/5 border border-white/10 p-4 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-semibold text-white text-sm">{lv.employeeName}</p>
+                    <span className="text-xs text-cyber-blue font-mono">{lv.employeeId}</span>
+                    <p className="text-xs text-white/50 mt-0.5">{lv.department}</p>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border flex-shrink-0 ${
+                    lv.status === 'Approved'
+                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                      : lv.status === 'Rejected'
+                      ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                      : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                  }`}>
+                    {lv.status}
+                  </span>
+                </div>
+                <p className="text-xs text-white/60 font-mono">{lv.startDate} → {lv.endDate}</p>
+                <p className="text-xs text-white/50 truncate">{lv.reason}</p>
+                {lv.status === 'Pending' && (
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      onClick={() => handleLeaveDecision(lv.id, 'Approved')}
+                      className="flex-1 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20 transition-all flex items-center justify-center gap-1"
+                    >
+                      <Check size={12} /> Approve
+                    </button>
+                    <button
+                      onClick={() => handleLeaveDecision(lv.id, 'Rejected')}
+                      className="flex-1 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition-all flex items-center justify-center gap-1"
+                    >
+                      <X size={12} /> Reject
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+            {leaves.length === 0 && (
+              <p className="text-center text-white/30 font-mono text-xs py-10">No leave requests logged in database.</p>
+            )}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
                 <tr className="border-b border-white/5 text-white/40 text-xs uppercase font-mono">
@@ -846,8 +893,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentTab }) =>
                     </td>
                     <td className="py-4">
                       <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${
-                        lv.status === 'Approved' 
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                        lv.status === 'Approved'
+                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                           : lv.status === 'Rejected'
                           ? 'bg-red-500/10 text-red-400 border-red-500/20'
                           : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
@@ -900,16 +947,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentTab }) =>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Daily Report Card */}
-            <div className="glass-card p-6">
+            <div className="glass-card p-4 sm:p-6">
               <h3 className="text-base font-bold text-white mb-2">Daily Attendance Logs</h3>
               <p className="text-xs text-white/40 mb-4">View comprehensive logs for a single day.</p>
               
-              <div className="flex gap-3 mb-6">
+              <div className="flex flex-wrap gap-2 mb-6">
                 <input
                   type="date"
                   value={reportDate}
                   onChange={(e) => setReportDate(e.target.value)}
-                  className="glass-input py-2 text-sm flex-1 cursor-pointer"
+                  className="glass-input py-2 text-sm flex-1 min-w-[140px] cursor-pointer"
                 />
                 <button
                   onClick={() => handleExportCSV('daily')}
@@ -987,16 +1034,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentTab }) =>
             </div>
 
             {/* Monthly Report Card */}
-            <div className="glass-card p-6">
+            <div className="glass-card p-4 sm:p-6">
               <h3 className="text-base font-bold text-white mb-2">Monthly Aggregate Analytics</h3>
               <p className="text-xs text-white/40 mb-4">View compiled stats for a full month.</p>
 
-              <div className="flex gap-3 mb-6">
+              <div className="flex flex-wrap gap-2 mb-6">
                 <input
                   type="month"
                   value={reportMonth}
                   onChange={(e) => setReportMonth(e.target.value)}
-                  className="glass-input py-2 text-sm flex-1 cursor-pointer"
+                  className="glass-input py-2 text-sm flex-1 min-w-[140px] cursor-pointer"
                 />
                 <button
                   onClick={() => handleExportCSV('monthly')}
@@ -1053,8 +1100,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentTab }) =>
       {/* TAB PANEL: AUDIT LOGS */}
       {/* ==================================================== */}
       {currentTab === 'logs' && (
-        <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="glass-card p-4 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h3 className="text-lg font-bold text-white">Security Compliance Audit Trail</h3>
             <span className="px-3 py-1 rounded bg-cyber-blue/10 border border-cyber-blue/20 text-xs font-mono text-cyber-blue flex items-center gap-1.5 animate-pulse">
               <ShieldAlert size={14} />
@@ -1062,20 +1109,38 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentTab }) =>
             </span>
           </div>
 
-          <div className="max-h-[500px] overflow-y-auto border border-white/5 rounded-xl">
+          {/* Mobile log cards */}
+          <div className="flex flex-col gap-3 sm:hidden max-h-[500px] overflow-y-auto">
+            {logs.map((log) => (
+              <div key={log.id} className="rounded-xl bg-white/5 border border-white/10 p-3 space-y-1">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <span className="text-cyber-purple font-bold uppercase text-[10px] tracking-wider">{log.action}</span>
+                  <span className="text-cyber-blue font-bold text-xs font-mono">{log.userId}</span>
+                </div>
+                <p className="text-white/60 text-xs font-sans">{log.details}</p>
+                <p className="text-white/30 text-[10px] font-mono">{new Date(log.timestamp).toLocaleString()}</p>
+              </div>
+            ))}
+            {logs.length === 0 && (
+              <p className="text-center text-white/30 font-mono text-xs py-10">No audit logs recorded.</p>
+            )}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden sm:block max-h-[500px] overflow-y-auto overflow-x-auto border border-white/5 rounded-xl">
             <table className="w-full text-left text-xs border-collapse">
               <thead className="bg-slate-950/60 sticky top-0 text-white/40 font-mono border-b border-white/5">
                 <tr>
-                  <th className="py-3 pl-4">Timestamp</th>
-                  <th className="py-3">Action Type</th>
-                  <th className="py-3">Operator User</th>
+                  <th className="py-3 pl-4 whitespace-nowrap">Timestamp</th>
+                  <th className="py-3 whitespace-nowrap">Action Type</th>
+                  <th className="py-3 whitespace-nowrap">Operator User</th>
                   <th className="py-3 pr-4">Details Summary</th>
                 </tr>
               </thead>
               <tbody>
                 {logs.map((log) => (
                   <tr key={log.id} className="border-b border-white/5 hover:bg-white/5 font-mono">
-                    <td className="py-3 pl-4 text-white/40 text-[10px]">
+                    <td className="py-3 pl-4 text-white/40 text-[10px] whitespace-nowrap">
                       {new Date(log.timestamp).toLocaleString()}
                     </td>
                     <td className="py-3">
